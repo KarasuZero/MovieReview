@@ -15,7 +15,7 @@ public class ReviewServlet extends HttpServlet {
 
     private int counter;
     ArrayList<Review> ReviewList;
-    ArrayList<Review> OutputList;
+
 
     public void init() {
         message = "Hello World!";
@@ -27,51 +27,57 @@ public class ReviewServlet extends HttpServlet {
 
         message = "in doGet";
 
-
        try {
            // reset counter and output
-           OutputList.clear();
+
            outPut= "";
            counter = 0;
 
            // getting user input
            String searchInput = request.getParameter("MovieTitle");
 
-            //search for the movie title in the arraylist
-           for(Review r : ReviewList) {
-               //add review to output list if title contains search input
-                if(r.getTitle().toLowerCase().contains(searchInput.toLowerCase())) {
-                   OutputList.add(r);
-                }
-            }
-
-           //set output to be displayed
-           if(OutputList.size() == 0) {
-               outPut = "No reviews found";
-           } else {
-               for(Review r: OutputList) {
+           if(searchInput.equalsIgnoreCase("listAllReview")) {
+               for (Review r : ReviewList){
                    outPut += "Movie #" + counter + ": Tittle: " + r.getTitle() + ", Rating:  "
-                           + r.getRating() + ", Review: " + r.getReview() + "\n";
+                           + r.getRating() + ", Review: " + r.getReview() + "   ";
                    counter++;
                }
+               if (outPut == "") {
+                   outPut = "No review found";
+               }
            }
+           else {
 
+               //search for the movie title in the arraylist
+               for (Review r : ReviewList) {
 
-            request.setAttribute("outPut", outPut);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("searchResults.jsp");
-            dispatcher.forward(request, response);
+                   if (r.getTitle().toLowerCase().contains(searchInput.toLowerCase())) {
+                       outPut += "Movie #" + counter + ": Tittle: " + r.getTitle() + ", Rating:  "
+                               + r.getRating() + ", Review: " + r.getReview() + "   ";
+                       counter++;
+                   }
+               }
 
+               if (outPut == "") {
+                   outPut = "No movie found";
+               }
+           }
+               request.setAttribute("outPut", outPut);
+               RequestDispatcher dispatcher = request.getRequestDispatcher("searchResults.jsp");
+               dispatcher.forward(request, response);
 
-        } catch (Exception e) {
-           //TODO handle exception cases
+       }
+       catch (Exception e)
+       {
            message = "Error: " + e.getMessage();
-        }
+       }
 
 
         // Hello
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
-        out.println("<h1>" + outPut + "</h1>");
+        out.println("<h1>" + "why?" + "</h1>");
+        out.println("<h1>" + message + "</h1>");
         out.println("</body></html>");
 
 
@@ -104,7 +110,6 @@ public class ReviewServlet extends HttpServlet {
 
         }
         catch(Exception e){
-            //TODO handle exception cases
             message = "Error: " + e.getMessage();
         }
 
